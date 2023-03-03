@@ -3,17 +3,18 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+
+// Kết nối database
+
+const database = "mongodb://127.0.0.1/car-managerment"
+mongoose.connect(database)
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const booksRouter = require('./routes/books');
-
+const carsRouter = require('./routes/cars')
 
 var app = express();
-
-const databaseBook = "mongodb://127.0.0.1/ss4"
-mongoose.connect(databaseBook);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,8 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/books', booksRouter);
-
+app.use('/cars',carsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

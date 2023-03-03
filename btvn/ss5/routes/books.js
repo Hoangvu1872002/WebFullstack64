@@ -1,8 +1,9 @@
 const express = require('express');
 const booksRouter = express.Router();
 const booksModel = require('../model/books.model');
+const { joint, emismatchedr } = require('../middleware/middleware')
 
-booksRouter.post('/', (req, res) => {
+booksRouter.post('/post',joint, (req, res) => {
     const book = new booksModel();
     book.title = req.body.title;
     book.author = req.body.author;
@@ -33,7 +34,7 @@ booksRouter.post('/', (req, res) => {
     })
 })
 
-booksRouter.get("/", (req, res) => {
+booksRouter.get("/", emismatchedr, (req, res) => {
     booksModel.find({ title: req.query.title }).exec((err, book) => {
         if (err) {
             res.send("error");
@@ -44,7 +45,7 @@ booksRouter.get("/", (req, res) => {
     })
 })
 
-booksRouter.put("/:id", (req, res) => {
+booksRouter.put("/:id",joint, (req, res) => {
     booksModel.findOneAndUpdate({
         _id: req.params.id
     }, {
@@ -76,7 +77,7 @@ booksRouter.put("/:id", (req, res) => {
 })
 
 
-booksRouter.delete("/:id", (req, res) => {
+booksRouter.delete("/:id",joint, (req, res) => {
     booksModel.findByIdAndDelete({
         _id: req.params.id
     }, {

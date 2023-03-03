@@ -7,13 +7,12 @@ const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const booksRouter = require('./routes/books');
 
+
+const database = "mongodb://127.0.0.1/jwt-demo"
+mongoose.connect(database);
 
 var app = express();
-
-const databaseBook = "mongodb://127.0.0.1/ss4"
-mongoose.connect(databaseBook);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,7 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/books', booksRouter);
 
 
 // catch 404 and forward to error handler
