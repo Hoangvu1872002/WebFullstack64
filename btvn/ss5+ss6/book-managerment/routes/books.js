@@ -34,8 +34,8 @@ booksRouter.post('/post',joint, (req, res) => {
     })
 })
 
-booksRouter.get("/", emismatchedr, (req, res) => {
-    booksModel.find({ title: req.query.title }).exec((err, book) => {
+booksRouter.get("/:id", emismatchedr, (req, res) => {
+    booksModel.find({ _id: req.params._id }).exec((err, book) => {
         if (err) {
             res.send("error");
         } else {
@@ -77,19 +77,26 @@ booksRouter.put("/:id",joint, (req, res) => {
 })
 
 
-booksRouter.delete("/:id",joint, (req, res) => {
-    booksModel.findByIdAndDelete({
-        _id: req.params.id
-    }, {
+booksRouter.delete("/:id",joint, async function(req, res){
 
-    }, (err) => {
-        if (err) {
-            res.send("error")
-        } else {
-            res.status(200).send("thanh cong!")
-        }
+    const bookDelete = booksModel.findById({
+        _id: req.params.id
+    })
+
+    if(!bookDelete){
+        return res.send('khong tim thay!')
+    }else{
+        booksModel.deleteOne({
+            _id: req.params.id
+        }, (err) => {
+            if (err) {
+               return res.send("error")
+            } else {
+               return res.status(200).send("thanh cong!")
+            }
+        })
     }
-    )
+
 })
 
 module.exports = booksRouter;
