@@ -7,7 +7,7 @@ const bookSchema = new booksSchema ({
     author: String,
     publication_date: String,
     pages: Number,
-    genres: [String, String, String],
+    genres: [String],
     publisher:{
         name: String,
         location: String

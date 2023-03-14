@@ -3,7 +3,7 @@ const booksRouter = express.Router();
 const booksModel = require('../model/books.model');
 const { joint, emismatchedr } = require('../middleware/middleware')
 
-booksRouter.post('/post',joint, (req, res) => {
+booksRouter.post('/',joint, async function(req, res){
     const book = new booksModel();
     book.title = req.body.title;
     book.author = req.body.author;
@@ -25,77 +25,108 @@ booksRouter.post('/post',joint, (req, res) => {
     //     }
     // })
 
-    booksModel.insertMany(book, (err) => {
+   await booksModel.insertMany(book, (err) => {
         if (err) {
-            res.send("error")
+            return res.send("error")
         } else {
-            res.send(book);
+            return res.send(book);
         }
     })
 })
 
-booksRouter.get("/:id", emismatchedr, (req, res) => {
-    booksModel.find({ _id: req.params._id }).exec((err, book) => {
-        if (err) {
-            res.send("error");
+booksRouter.get("/:id", emismatchedr, async function(req, res){
+
+   const bookFind = await booksModel.findOne({ _id: req.params.id })
+
+        if (!bookFind) {
+            return res.send("error");
         } else {
             console.log("success");
-            res.json(book)
+            return res.json(bookFind);
         }
-    })
+    
 })
 
-booksRouter.put("/:id",joint, (req, res) => {
-    booksModel.findOneAndUpdate({
+booksRouter.put("/:id",joint, async function(req, res){
+
+    console.log('loiiiiiiii')
+
+    const bookUpdate = await booksModel.findOne({
         _id: req.params.id
-    }, {
-        $set: {
-            title: req.body.title,
-            author: req.body.author,
-            publication_date: req.body.publication_date,
-            pages: req.body.pages,
+    })
+    console.log('loiiiiiiii')
 
-            genres: [req.body.genres[0], req.body.genres[1], req.body.genres[2]],
-            publisher:{
-                name: req.body.publisher.name,
-                location: req.body.publisher.location,
-            }
+
+    if(!bookUpdate){
+        return res.send('khong tim thay!')
+    }else{
+        try {
+            await booksModel.updateOne({
+                 _id: req.params.id
+             },{               
+                title: req.body.title,
+                author: req.body.author,
+                publication_date: req.body.publication_date,
+                pages: req.body.pages,
+    
+                genres: [req.body.genres[0], req.body.genres[1], req.body.genres[2]],
+                publisher:{
+                    name: req.body.publisher.name,
+                    location: req.body.publisher.location
+                }            
+             })
+              bookUpdate = await booksModel.findById({
+                _id: req.params.id
+            })
+             return res.status(200).send(bookUpdate);          
+        } catch (error) {
+          return res.send('loi!')  
         }
-    }, {
-        upsert: true
-
-    },
-        (err, book) => {
-            if (err) {
-                res.send("error")
-            } else {
-                res.send(book)
-            }
-        }
-
-    )
+    } 
 })
 
 
 booksRouter.delete("/:id",joint, async function(req, res){
 
-    const bookDelete = booksModel.findById({
-        _id: req.params.id
-    })
 
-    if(!bookDelete){
-        return res.send('khong tim thay!')
-    }else{
-        booksModel.deleteOne({
-            _id: req.params.id
-        }, (err) => {
-            if (err) {
-               return res.send("error")
-            } else {
-               return res.status(200).send("thanh cong!")
-            }
-        })
-    }
+    console.log(req.params.id)
+    
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        // Yes, it's a valid ObjectId, proceed with `findById` call.
+        try {
+            await booksModel.deleteOne({
+                
+                 _id: req.params.id
+             })
+             return res.status(200).send("thanh cong!");         
+        } catch (error) {
+          return res.send('loi!')  
+        }
+      }else{
+        res.send('khong thay')
+      }
+    // myObjectId = ObjectId(req.params.id)
+    // myObjectIdString = myObjectId.toString()
+
+//     const bookDelete = await booksModel.findOne({
+//       _id: req.params.id.toString()
+// })
+
+//     console.log(bookDelete)
+
+//     if(!bookDelete){
+//         return res.send('khong tim thay!')
+//     }else{
+//         try {
+//             await booksModel.deleteOne({
+                
+//                  _id: req.params.id
+//              })
+//              return res.status(200).send("thanh cong!");         
+//         } catch (error) {
+//           return res.send('loi!')  
+//         }
+//     }
 
 })
 

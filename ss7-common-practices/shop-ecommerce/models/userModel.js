@@ -39,13 +39,12 @@ userSchema.pre('save', async function (next){
         } 
 })
 
-// userSchema.post('updateOne', async function (next){
+// userSchema.pre('updateOne', async function (next){
 //     console.log('ccccccccccccc')
+//     // console.log(this);
 
-//     if(!this.isModified('password')){
-//         console.log('aaaaaaa')
-//         return next();
-//     }
+//     const data = this.getUpdate().$set.password;
+//     console.log(data);
 //         try {
 //             const salt = await bcrypt.genSalt(10);
 //             console.log('aaaaaaa')

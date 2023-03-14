@@ -76,22 +76,22 @@ const getUserProfile = asyncModel(async (req, res) => {
 });
 
 const updateUserProfile = asyncModel(async (req, res) => {
-    console.log('aaaaaaaaaaa')
+    
     try {
-        console.log('aaaaaaaaaaa')
-        await userModel.updateOne({
-            _id: req.user.id
-        },{               
-                    name: req.body.name,
-                    email: req.body.email,
-                    // password: req.body.password               
-        }
-        );
-        console.log('aaaaaaaaaaa')
+        
+        const  user = userModel.findOne(req.params.id);
+
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.password = req.body.password;
+
+        await user.save();
+        
         const userUpdate = await userModel.findById({ _id: req.user.id }).select('-password');
         res.json(userUpdate);
 
     } catch (e) {
+        console.log(e);
         res.status(401);
         throw new Error('khong the cap nhat!');
     }
@@ -152,13 +152,10 @@ const updateUser = asyncModel(async (req,res)=>{
         })
         if(user){
             try {
-                await userModel.updateOne({
-                    _id: req.params.id
-                },{               
-                            name: req.body.name,
-                            email: req.body.email               
-                }
-                );
+                 user.name = req.body.name;
+                 user.email = req.body.email ;
+                 user.password =  req.body.password;
+                 await user.save();
                  const userUpdate = await userModel.findById({ _id: req.params.id }).select('-password');
                  res.json(userUpdate);
             } catch (error) {

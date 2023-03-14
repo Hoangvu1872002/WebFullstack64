@@ -14,8 +14,9 @@ router.post('/register', async function (req, res) {
   }
 
   const emailExists = await usersRouter.findOne({ email: req.body.email })
+  
   if (emailExists) {
-    res.status(400).send('email exists!');
+    return res.status(400).send('email exists!');
   }
   
 
@@ -29,9 +30,9 @@ router.post('/register', async function (req, res) {
 
   try {
     const user = await newUser.save();
-    res.send(user)
+    return res.send(user)
   } catch (error) {
-    res.status(404).send('error')
+    return res.status(404).send('error')
   }
 })
 
@@ -55,7 +56,7 @@ router.post('/login', async function (req, res) {
   }
 
   const token = jwt.sign({ _id: userLogin._id }, 'mabimat')
-  res.header('authToken', token).send(token);
+  return res.header('authToken', token).send(token);
 })
 
 module.exports = router;
