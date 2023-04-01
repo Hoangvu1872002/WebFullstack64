@@ -8,20 +8,22 @@ const getOrders = asyncHandler(async (req, res) => {
     const a = await productModel.find({})
 
     // console.log(a)
-       const ordersMap = orders.map((e)=>{
+       const ordersMap = await orders.map((e)=>{
         const item = e.item;
         const fillProduct = a.find((element)=>element.sku===(item))
         // console.log(ordersMap)
         
-        console.log('aaaa')
+        console.log(fillProduct.description)
+        
+        console.log(orders)
 
         return{
-          ...e,
+          ... e,
           description: fillProduct.description
         }
     })
-    console.log(ordersMap)
-    res.json(ordersMap);
+    // console.log(ordersMap)
+    res.json( ordersMap);
   })
 
   module.exports = {

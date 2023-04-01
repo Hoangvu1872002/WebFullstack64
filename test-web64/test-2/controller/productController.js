@@ -9,11 +9,9 @@ const getAllProduct = asyncHandler(async (req, res) => {
 
 const fillterProduct =  asyncHandler(async (req, res) => {
     
-    
-    const fillProduct = await productModel.fillter((e)=>{
-        return e.instock < 100
-    })
-    console.log('aaaa')
+    const  products = await productModel.find({});
+
+    const fillProduct =  products.filter((e)=> e.instock < 100)
     res.json(fillProduct);
 })
 
