@@ -9,8 +9,7 @@ const {errorsMiddleware} = require('./middleware/errorsMiddleware');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const productRouter = require('./routes/product');
-const orderRouter = require('./routes/order')
-
+const orderRouter = require('./routes/order');
 
 connectDb();
 
@@ -29,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productRouter);
-app.use('/orders', orderRouter)
+app.use('/orders', orderRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

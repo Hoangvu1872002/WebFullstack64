@@ -23,15 +23,12 @@ const userSchema = new schema({
 },
 );
 userSchema.pre('save', async function (next){
-    console.log('bbbbbbbbbbbbbbb')
-
+    
     if(!this.isModified('password')){
-        console.log('aaaaaaa')
         return next();
     }
         try {
             const salt = await bcrypt.genSalt(10);
-            console.log('aaaaaaa')
             this.password = await bcrypt.hash(this.password, salt);
             next();   
         } catch (error) {
@@ -39,20 +36,6 @@ userSchema.pre('save', async function (next){
         } 
 })
 
-// userSchema.pre('updateOne', async function (next){
-//     console.log('ccccccccccccc')
-//     // console.log(this);
 
-//     const data = this.getUpdate().$set.password;
-//     console.log(data);
-//         try {
-//             const salt = await bcrypt.genSalt(10);
-//             console.log('aaaaaaa')
-//             this.password = await bcrypt.hash(this.password, salt);
-//             next();   
-//         } catch (error) {
-//             return next(error);
-//         } 
-// })
 
 module.exports = mongoose.model('user', userSchema);

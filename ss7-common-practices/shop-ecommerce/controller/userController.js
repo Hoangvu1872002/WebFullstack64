@@ -49,7 +49,7 @@ const authLogin = asyncModel(async (req, res) => {
         if (await bcrypt.compare(req.body.password, emailExists.password)) {
             res.json({
                 _id: emailExists.id,
-                name: emailExists.name,
+                name: emailExists.name, 
                 email: emailExists.email,
                 isAdmin: emailExists.isAdmin,
                 token: jwt.sign({ _id: emailExists.id }, 'masobimat')

@@ -139,40 +139,48 @@ const reviewProduct =asyncHandler(async(req,res)=>{
             
             _id: req.params.id
         })
-        console.log(req.params.id)
-        if(productFind){                  
-            try {
-                const newReview = {
-                    name: req.body.name,
-                    rating: req.body.rating,
-                    comment: req.body.comment,
-                    user: req.user._id
-                }
+        // console.log(req.params.id)
+        if(productFind){ 
+
+            const reviewExists = productFind.reviews.find((productReview)=>productReview.user.equals( req.user._id))
+
+            if(!reviewExists){
+                try {
+                    const newReview = {
+                        name: req.body.name,
+                        rating: req.body.rating,
+                        comment: req.body.comment,
+                        user: req.user._id
+                    }
+                
+                    productFind.reviews =  [...productFind.reviews, newReview];
+                    
+                    productFind.numReviews = productFind.reviews.length;
+    
+                    const listRating = productFind.reviews.map((e)=>{
+                        return e.rating;
+                    })
+                    const totalRating = listRating.reduce((total, currentValue)=>{
+                         return total + currentValue;
+                    })
+    
+                    productFind.rating =  Math.round((totalRating / (productFind.numReviews))*10)/10;
+                    
+    
+                    console.log(productFind.rating)
+    
+                    await productFind.save();
+                    const productReview = await productModel.findById({ _id: req.params.id })
+                     res.json(productReview);
             
-                productFind.reviews =  [...productFind.reviews, newReview];
-                
-                productFind.numReviews = productFind.reviews.length;
-
-                const listRating = productFind.reviews.map((e)=>{
-                    return e.rating;
-                })
-                const totalRating = listRating.reduce((total, currentValue)=>{
-                     return total + currentValue;
-                })
-
-                productFind.rating =  Math.round((totalRating / (productFind.numReviews))*10)/10;
-                
-
-                console.log(productFind.rating)
-
-                await productFind.save();
-                const productReview = await productModel.findById({ _id: req.params.id })
-                 res.json(productReview);
-        
-            } catch (error) {
+                } catch (error) {
+                    res.status(401);
+                throw new Error('Review khong thanh cong!');
+                }  
+            }else{
                 res.status(401);
-            throw new Error('Review khong thanh cong!');
-            }           
+            throw new Error('Ban da tung review!');
+            }         
         }else{
             res.status(401);
             throw new Error('Khong tim thay id abc!');
